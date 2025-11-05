@@ -1,2 +1,2 @@
 # MapaRiesgos_SCI
-detecta el humito 
+SISTEMA CONTRA INCENDIOS
