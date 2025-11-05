@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MapaRiesgos_SCI
 {
-    // Clase que representa el edificio y gestiona su visualización
-    public class Edificio
+    class Edificio
     {
         private const int ANCHO = 34;
         private List<string> historial = new List<string>();
 
-        // Simulación automática cada cierto tiempo
-        public void SimulacionAutomatica(SensorManager s, int intervalo)
+        // Simulacion automática cada cierto tiempo
+        public void SimulacionAutomatica(SensorManager s, int duracionAlarma)
         {
             bool continuar = true;
 
@@ -20,29 +22,55 @@ namespace MapaRiesgos_SCI
                 Console.Clear();
 
                 int[,] datos = s.GenerarLecturas();
-                int[] riesgo = s.CalcularRiesgo(datos);
-                int pisoIncendio = s.DetectarIncendio(datos);
+                int[] riesgos = s.CalcularRiesgo(datos);
+                int? pisoIncendio = s.DetectarIncendio(datos);
 
-                DibujarMapa(datos, riesgo, pisoIncendio);
-                MostrarResumen(datos, riesgo, pisoIncendio);
-                GuardarHistorial(datos, riesgo, pisoIncendio);
+                GuardarHistorial(datos, riesgos, pisoIncendio ?? -1);
 
-                if (pisoIncendio != -1)
-                    ProtocoloIncendio(pisoIncendio);
+                DibujarMapa(datos, riesgos, pisoIncendio ?? -1);
+
+                if (pisoIncendio.HasValue)
+                {
+                    ProtocoloIncendio(pisoIncendio.Value);
+                }
 
                 Console.WriteLine("\nPresione Q para detener o espere...");
-                int elapsed = 0;
-                while (elapsed < intervalo)
+
+                int transcurrido = 0;
+                while (transcurrido < duracionAlarma)
                 {
                     if (Console.KeyAvailable && Console.ReadKey(true).Key == ConsoleKey.Q)
                     {
                         continuar = false;
                         break;
                     }
-                    Thread.Sleep(500);
-                    elapsed += 500;
+                    Thread.Sleep(100);
+                    transcurrido += 100;
                 }
             }
+        }
+
+        private void ProtocoloIncendio(int piso)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"\nALERTA: INCENDIO EN PISO " + piso);
+            Console.ResetColor();
+
+            for (int i = 0; i < 3; i++)
+            {
+                // Manejamos excepciones que puedan ocurrir en el Console.Beep
+                // Para que el programa no falle en sistemas que no soporten sonido
+                try
+                {
+                    Console.Beep(1000, 200);
+                    Console.Beep(1400, 200);
+                }
+                catch { }
+                Thread.Sleep(300);
+            }
+
+            Console.WriteLine("\nEvacuación en curso...");
+            Thread.Sleep(3000);
         }
 
         // Verifica un piso específico
@@ -63,6 +91,17 @@ namespace MapaRiesgos_SCI
             }
         }
 
+        // Muestra datos de un piso
+        private void DibujarPiso(int piso, int[,] datos, int[] riesgo)
+        {
+            int idx = piso - 1;
+            Console.WriteLine($"\nPISO {piso}");
+            Console.WriteLine($"Humo: {datos[idx, 0]}% | Temperatura: {datos[idx, 1]}% | Manual: {(datos[idx, 2] == 1 ? "PRESIONADO" : "OK")}");
+            Console.WriteLine($"Nivel de riesgo: {(riesgo[idx] == 0 ? "BAJO" : riesgo[idx] == 1 ? "MEDIO" : "ALTO")}");
+            Console.WriteLine("\nPresione una tecla para volver...");
+            Console.ReadKey(true);
+        }
+
         // Activa un incendio manualmente
         public void ActivarIncendioManual()
         {
@@ -70,7 +109,7 @@ namespace MapaRiesgos_SCI
             if (int.TryParse(Console.ReadLine(), out int piso) && piso >= 1 && piso <= SensorManager.NUM_PISOS)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"\n🔥 Incendio manual activado en el Piso {piso}");
+                Console.WriteLine($"\nIncendio manual activado en el Piso {piso}");
                 Console.ResetColor();
                 ProtocoloIncendio(piso);
             }
@@ -96,12 +135,13 @@ namespace MapaRiesgos_SCI
 
                 if (riesgo[idx] == 0) { bg = ConsoleColor.DarkGreen; etiqueta += "- BAJO"; }
                 else if (riesgo[idx] == 1) { bg = ConsoleColor.DarkYellow; fg = ConsoleColor.Black; etiqueta += "- MEDIO"; }
-                else { bg = ConsoleColor.DarkRed; etiqueta += "- ALTO"; }
+                else { bg = ConsoleColor.Red; etiqueta += "- ALTO"; }
 
                 if (p == pisoIncendio)
                 {
-                    bg = ConsoleColor.Red;
-                    etiqueta = $" PISO {p} - ¡INCENDIO!";
+                    bg = ConsoleColor.DarkRed;
+                    fg = ConsoleColor.Black;
+                    etiqueta = $"PISO {p} - ¡INCENDIO!";
                 }
 
                 Console.ForegroundColor = ConsoleColor.White;
@@ -120,16 +160,16 @@ namespace MapaRiesgos_SCI
             }
         }
 
-        private void DibujarPiso(int piso, int[,] datos, int[] riesgo)
+        // Centra un texto en un ancho dado
+        private string Centrar(string texto, int ancho)
         {
-            int idx = piso - 1;
-            Console.WriteLine($"\nPISO {piso}");
-            Console.WriteLine($"Humo: {datos[idx, 0]}% | Temperatura: {datos[idx, 1]}% | Manual: {(datos[idx, 2] == 1 ? "PRESIONADO" : "OK")}");
-            Console.WriteLine($"Nivel de riesgo: {(riesgo[idx] == 0 ? "BAJO" : riesgo[idx] == 1 ? "MEDIO" : "ALTO")}");
-            Console.WriteLine("\nPresione una tecla para volver...");
-            Console.ReadKey(true);
+            if (texto.Length >= ancho) return texto.Substring(0, ancho);
+            int espacio = ancho - texto.Length;
+            int izq = espacio / 2;
+            return new string(' ', izq) + texto + new string(' ', espacio - izq);
         }
 
+        // Muestra resumen de todos los pisos
         private void MostrarResumen(int[,] datos, int[] riesgo, int pisoIncendio)
         {
             Console.WriteLine("\nRESUMEN DE PISOS:");
@@ -140,32 +180,19 @@ namespace MapaRiesgos_SCI
             }
         }
 
-        private void ProtocoloIncendio(int piso)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"\n⚠ ALERTA: INCENDIO EN PISO {piso} ⚠");
-            Console.ResetColor();
-
-            for (int i = 0; i < 3; i++)
-            {
-                try { Console.Beep(1000, 200); Console.Beep(1400, 200); } catch { }
-                Thread.Sleep(300);
-            }
-
-            Console.WriteLine("\n🚒 Evacuación en curso...");
-            Thread.Sleep(3000);
-        }
-
+        // Guarda el historial de lecturas
         private void GuardarHistorial(int[,] datos, int[] riesgo, int pisoIncendio)
         {
-            string entrada = DateTime.Now.ToString("HH:mm:ss") + " → ";
+            string entrada = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss") + " -> ";
+            
             for (int p = 0; p < SensorManager.NUM_PISOS; p++)
                 entrada += $"[P{p + 1}:H={datos[p, 0]}% T={datos[p, 1]}% R={riesgo[p]}] ";
             if (pisoIncendio != -1)
-                entrada += $"🔥 PISO {pisoIncendio}";
+                entrada += $"PISO {pisoIncendio}";
             historial.Add(entrada);
         }
 
+        // Muestra el historial de lecturas
         public void MostrarHistorial()
         {
             Console.Clear();
@@ -179,12 +206,5 @@ namespace MapaRiesgos_SCI
             Console.ReadKey(true);
         }
 
-        private string Centrar(string texto, int ancho)
-        {
-            if (texto.Length >= ancho) return texto.Substring(0, ancho);
-            int espacio = ancho - texto.Length;
-            int izq = espacio / 2;
-            return new string(' ', izq) + texto + new string(' ', espacio - izq);
-        }
     }
 }

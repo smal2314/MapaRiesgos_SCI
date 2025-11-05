@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B9C16B63-C282-4782-BA97-E8FBC3FEFED0}</ProjectGuid>
+    <ProjectGuid>{D79B18B7-72D6-4852-AA10-7205D05028AB}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MapaRiegos_SCI</RootNamespace>
-    <AssemblyName>MapaRiegos_SCI</AssemblyName>
+    <RootNamespace>MapaRiesgos_SCI</RootNamespace>
+    <AssemblyName>MapaRiesgos_SCI</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -46,7 +46,7 @@
     <Compile Include="Edificio.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SensorManager.cs" />
+    <Compile Include="Sensor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

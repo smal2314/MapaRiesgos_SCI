@@ -1,26 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MapaRiesgos_SCI
 {
-    // Clase principal: controla el flujo general y muestra el menú
-    internal class Program
+    class Program
     {
-        // Intervalo en milisegundos para la simulación automática (10 segundos)
         static int intervalo = 10000;
 
         static void Main(string[] args)
         {
+            // Configuración de sistema de codificación de caracteres
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+
             Console.Title = "MAPA DE RIESGOS - SISTEMA CONTRA INCENDIOS";
-            //Console.OutputEncoding = System.Text.Encoding.UTF8;//configuracion de sistema de codificación de caracteres
-           
 
-            // Crear objetos de las otras clases (bibliotecas)
-
+            // Crear objetos de las otras clases
             SensorManager sensorManager = new SensorManager();
             Edificio edificio = new Edificio();
-
-            //declaracion e inicializacion de variables
 
             bool salir = false;
 
@@ -59,7 +60,7 @@ namespace MapaRiesgos_SCI
                         if (int.TryParse(Console.ReadLine(), out int segs) && segs > 0)
                         {
                             intervalo = segs * 1000;
-                            Console.WriteLine($"Intervalo actualizado a {segs} segundos.");
+                            Console.WriteLine("Intervalo actualizado a " + segs + " segundos.");
                         }
                         else
                         {

@@ -1,11 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace MapaRiesgos_SCI
 {
-    // Clase que genera lecturas de los sensores y evalúa riesgos
     public class SensorManager
     {
         public const int NUM_PISOS = 5; // Número total de pisos
+
+        public const int HUMO = 0;
+        public const int TEMPERATURA = 1;
+        public const int MANUAL = 2;
+
         private Random rnd = new Random(); // Generador aleatorio
 
         // Genera lecturas aleatorias para cada piso
@@ -15,9 +23,9 @@ namespace MapaRiesgos_SCI
 
             for (int p = 0; p < NUM_PISOS; p++)
             {
-                datos[p, 0] = rnd.Next(0, 101); // humo %
-                datos[p, 1] = rnd.Next(0, 101); // temperatura %
-                datos[p, 2] = (rnd.Next(0, 100) < 2) ? 1 : 0; // 2% de prob. manual
+                datos[p, HUMO] = rnd.Next(0, 101); // humo %
+                datos[p, TEMPERATURA] = rnd.Next(0, 101); // temperatura %
+                datos[p, MANUAL] = (rnd.Next(0, 100) < 2) ? 1 : 0; // 2% de prob. manual
             }
 
             return datos;
@@ -43,7 +51,7 @@ namespace MapaRiesgos_SCI
         }
 
         // Detecta si hay incendio (retorna piso o -1)
-        public int DetectarIncendio(int[,] datos)
+        public int? DetectarIncendio(int[,] datos)
         {
             for (int p = 0; p < NUM_PISOS; p++)
             {
@@ -54,7 +62,7 @@ namespace MapaRiesgos_SCI
                 if (manual == 1 || (humo >= 90 && temp >= 57))
                     return p + 1; // piso con incendio
             }
-            return -1; // sin incendio
+            return null; // sin incendio
         }
     }
 }

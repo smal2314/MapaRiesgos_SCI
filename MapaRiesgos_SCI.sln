@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36511.14 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapaRiegos_SCI", "MapaRiegos_SCI\MapaRiegos_SCI.csproj", "{B9C16B63-C282-4782-BA97-E8FBC3FEFED0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapaRiesgos_SCI", "MapaRiesgos_SCI\MapaRiesgos_SCI.csproj", "{D79B18B7-72D6-4852-AA10-7205D05028AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B9C16B63-C282-4782-BA97-E8FBC3FEFED0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B9C16B63-C282-4782-BA97-E8FBC3FEFED0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B9C16B63-C282-4782-BA97-E8FBC3FEFED0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B9C16B63-C282-4782-BA97-E8FBC3FEFED0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D79B18B7-72D6-4852-AA10-7205D05028AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D79B18B7-72D6-4852-AA10-7205D05028AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D79B18B7-72D6-4852-AA10-7205D05028AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D79B18B7-72D6-4852-AA10-7205D05028AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {065C8D81-43EE-4C34-A217-55009064102F}
+		SolutionGuid = {68B5B991-5B44-431D-9D00-180EC63B08BC}
 	EndGlobalSection
 EndGlobal
