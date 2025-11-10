@@ -10,13 +10,13 @@ jobs:
     runs-on: windows-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     
     - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
 
     - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.5
+      uses: NuGet/setup-nuget@v2
       
     - name: Restore NuGet packages
       run: nuget restore MapaRiesgos_SCI.sln
@@ -25,7 +25,7 @@ jobs:
       run: msbuild MapaRiesgos_SCI.sln /p:Configuration=Release /p:Platform="Any CPU"
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v5
       with:
         name: MapaRiesgos_SCI
         path: MapaRiesgos_SCI\bin\Release\MapaRiesgos_SCI.exe
